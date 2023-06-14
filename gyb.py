@@ -165,6 +165,12 @@ uploaded messages with a gyb-restored label.',
   ATTENTION - This is not compatible with --label-strip \
   ATTENTION - this will also create one INBOX and SENT specific label',
                       default=[])
+  parser.add_argument('--skip-label',
+    action='append',
+    dest='labels_to_skip',
+    help='Optional: On restore, all messages with these labels will be \
+skipped in the restore step.',
+    default=[])
   parser.add_argument('--strip-labels',
     dest='strip_labels',
     action='store_true',
@@ -2252,6 +2258,16 @@ def main(argv):
             if l == ('CHAT',):
               l = ('Chats_restored',)
             labels.append(l[0])
+
+      should_skip_label = None
+      for label_to_skip in options.labels_to_skip:
+        if label_to_skip in labels:
+          should_skip_label = label_to_skip
+          break
+      if should_skip_label:
+        print(f"SKIPPING message because label '{should_skip_label}'")
+        continue
+
       if options.label_restored:
         for restore_label in options.label_restored:
           labels.append(restore_label)
@@ -2433,6 +2449,16 @@ def main(argv):
               cased_labels.append(label)
             else:
               cased_labels.append(label)
+
+          should_skip_label = None
+          for label_to_skip in options.labels_to_skip:
+            if label_to_skip in labels:
+              should_skip_label = label_to_skip
+              break
+          if should_skip_label:
+            print(f"SKIPPING message {request_id} because label '{should_skip_label}'")
+            continue
+
           labelIds = labelsToLabelIds(cased_labels)
           rewrite_line(" message %s - %s%%" % (current, mbox_pct))
           full_message = message.as_bytes()
