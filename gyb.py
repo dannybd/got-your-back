@@ -2452,7 +2452,7 @@ def main(argv):
 
           should_skip_label = None
           for label_to_skip in options.labels_to_skip:
-            if label_to_skip in labels:
+            if label_to_skip in cased_labels:
               should_skip_label = label_to_skip
               break
           if should_skip_label:
