@@ -27,11 +27,11 @@ class fmsg():
         line = line.lower()
       if check_folded_header:
         if line.startswith(b' ') or line.startswith(b'\t'):
-          header_value += line.lstrip()
+          header_value += b' ' + line.lstrip()
         else:
           return header_value.decode()
       elif line.startswith(b'%s: ' % header):
-        header_value = line[len(header)+2:]
+        header_value = line[len(header)+2:].rstrip()
         check_folded_header = True
       elif line == '':
         return header_value.decode()
